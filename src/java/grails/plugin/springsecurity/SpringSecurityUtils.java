@@ -303,7 +303,19 @@ public final class SpringSecurityUtils {
 		if (httpSession != null) {
 			SavedRequest savedRequest = (SavedRequest)httpSession.getAttribute(SAVED_REQUEST);
 			if (savedRequest != null) {
-				return !savedRequest.getHeaderValues(ajaxHeaderName).isEmpty();
+				for (String ajaxHeaderValue : savedRequest.getHeaderValues(ajaxHeaderName)) {
+					if ("XMLHttpRequest".equals(ajaxHeaderValue)) {
+						return true;
+					}
+				}
+				if (savedRequest.getParameterValues("ajax") != null) {
+					for (String ajaxParameter : savedRequest.getParameterValues("ajax")) {
+						if ("true".equals(ajaxParameter)) {
+							return true;
+						}
+					}
+				}
+				return false;
 			}
 		}
 

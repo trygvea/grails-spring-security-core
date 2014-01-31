@@ -149,6 +149,12 @@ class SpringSecurityUtilsTests extends GroovyTestCase {
 		assertTrue SpringSecurityUtils.isAjax(request)
 	}
 
+	void testIsAjaxUsingJellyBeanBrowser() {
+		request.addHeader('X-Requested-With', 'com.android.browser')
+
+		assertFalse SpringSecurityUtils.isAjax(request)
+	}
+
 	void testIsAjaxUsingSavedRequestFalse() {
 
 		def savedRequest = new DefaultSavedRequest(request, new PortResolverImpl())
@@ -159,11 +165,20 @@ class SpringSecurityUtilsTests extends GroovyTestCase {
 
 	void testIsAjaxUsingSavedRequestTrue() {
 
-		request.addHeader 'X-Requested-With', 'true'
+		request.addHeader 'X-Requested-With', 'XMLHttpRequest'
 		def savedRequest = new DefaultSavedRequest(request, new PortResolverImpl())
 		request.session.setAttribute(SpringSecurityUtils.SAVED_REQUEST, savedRequest)
 
 		assertTrue SpringSecurityUtils.isAjax(request)
+	}
+
+	void testIsAjaxUsingSavedRequestWithJEllyBeanBrowser() {
+
+		request.addHeader 'X-Requested-With', 'com.android.browser'
+		def savedRequest = new DefaultSavedRequest(request, new PortResolverImpl())
+		request.session.setAttribute(SpringSecurityUtils.SAVED_REQUEST, savedRequest)
+
+		assertFalse SpringSecurityUtils.isAjax(request)
 	}
 
 	void testIfAllGranted() {
